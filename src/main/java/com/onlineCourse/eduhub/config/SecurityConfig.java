@@ -22,7 +22,7 @@ public class SecurityConfig {
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/health").permitAll()
+                .requestMatchers("/", "/health", "/contactus").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
         );
