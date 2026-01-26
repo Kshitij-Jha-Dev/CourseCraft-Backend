@@ -19,11 +19,14 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable());
 
+        http.cors(cors -> {});
+        
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
+        
         http.authorizeHttpRequests(auth -> auth
         		.requestMatchers("/", "/health").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
 
