@@ -2,6 +2,7 @@ package com.onlineCourse.eduhub.service.impl;
 
 import com.onlineCourse.eduhub.dto.auth.*;
 import com.onlineCourse.eduhub.entity.User;
+import com.onlineCourse.eduhub.exception.EmailAlreadyExistsException;
 import com.onlineCourse.eduhub.repository.UserRepository;
 import com.onlineCourse.eduhub.security.JwtService;
 import com.onlineCourse.eduhub.service.AuthService;
@@ -20,9 +21,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signup(SignupRequest request) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("User already exists with this email");
-        }
+    	 if (userRepository.existsByEmail(request.getEmail())) {
+    	        throw new EmailAlreadyExistsException("Email already registered");
+    	    }
+
 
         User user = User.builder()
                 .name(request.getName())

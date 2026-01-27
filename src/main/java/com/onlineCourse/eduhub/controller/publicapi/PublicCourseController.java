@@ -3,9 +3,11 @@ package com.onlineCourse.eduhub.controller.publicapi;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +57,29 @@ public class PublicCourseController {
         ));
     }
 
+    
+    @GetMapping("/courses/{id}")
+    public ResponseEntity<?> getCourseById(@PathVariable Integer id) {
+
+        Optional<Course> courseOpt = courseRepository.findById(id);
+
+        if (courseOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "success", false,
+                    "message", "Course not found"
+            ));
+        }
+        
+        Course course = courseOpt.get();
+        enrichEnrollmentFlag(List.of(course));
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Course fetched successfully",
+                "data", course
+        ));
+    }
+    
     // Shared logic
     private void enrichEnrollmentFlag(List<Course> courses) {
 
