@@ -26,6 +26,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
         		.requestMatchers("/", "/health").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/allcourses", "/api/search").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
