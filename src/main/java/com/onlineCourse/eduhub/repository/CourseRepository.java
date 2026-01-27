@@ -14,6 +14,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
         WHERE lower(c.courseName) LIKE lower(concat('%', :keyword, '%'))
            OR lower(c.courseDescription) LIKE lower(concat('%', :keyword, '%'))
            OR lower(c.trainer) LIKE lower(concat('%', :keyword, '%'))
+        ORDER BY c.rating DESC
     """)
     List<Course> searchCourses(@Param("keyword") String keyword);
 }
