@@ -1,16 +1,19 @@
 package com.onlineCourse.eduhub.service.impl;
 
+import java.util.List;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.onlineCourse.eduhub.dto.user.UpdateProfileRequest;
 import com.onlineCourse.eduhub.dto.user.UserResponse;
 import com.onlineCourse.eduhub.entity.User;
 import com.onlineCourse.eduhub.repository.UserRepository;
 import com.onlineCourse.eduhub.service.AdminUserService;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll()
+        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -69,11 +72,12 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     private UserResponse toResponse(User user) {
-        return new UserResponse(
+    	return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getCreatedAt()
         );
     }
     
