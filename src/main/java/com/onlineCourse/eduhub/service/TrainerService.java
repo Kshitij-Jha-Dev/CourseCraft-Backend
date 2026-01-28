@@ -1,7 +1,6 @@
 package com.onlineCourse.eduhub.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.onlineCourse.eduhub.dto.trainer.TrainerRequest;
 import com.onlineCourse.eduhub.entity.Trainer;

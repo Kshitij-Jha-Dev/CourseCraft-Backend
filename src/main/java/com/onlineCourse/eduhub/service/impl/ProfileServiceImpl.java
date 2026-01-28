@@ -39,10 +39,11 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getEmail() != null &&
             !request.getEmail().equals(user.getEmail())) {
 
-            if (userRepository.existsByEmail(request.getEmail())) {
-                throw new RuntimeException("Email already in use");
-            }
-            user.setEmail(request.getEmail());
+        	 throw new RuntimeException("User email cannot be changed");
+//            if (userRepository.existsByEmail(request.getEmail())) {
+//                throw new RuntimeException("Email already in use");
+//            }
+//            user.setEmail(request.getEmail());
         }
 
         // Update password

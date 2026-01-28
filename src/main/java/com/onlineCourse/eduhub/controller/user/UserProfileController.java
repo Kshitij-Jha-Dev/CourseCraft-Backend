@@ -47,15 +47,21 @@ public class UserProfileController {
         if (request.getEmail() != null &&
             !request.getEmail().equals(user.getEmail())) {
 
-            if (userRepository.existsByEmail(request.getEmail())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                        "success", false,
-                        "errorCode", "EMAIL_ALREADY_EXISTS",
-                        "message", "Email already in use"
-                ));
-            }
-
-            user.setEmail(request.getEmail());
+//            if (userRepository.existsByEmail(request.getEmail())) {
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+//                        "success", false,
+//                        "errorCode", "EMAIL_ALREADY_EXISTS",
+//                        "message", "Email already in use"
+//                ));
+//            }
+//
+//            user.setEmail(request.getEmail());
+        	
+        	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                    "success", false,
+                    "errorCode", "EMAIL_CANNOT_BE_CHANGED",
+                    "message", "Email cannot be changed"
+            ));
         }
 
         // Update password (if provided)
