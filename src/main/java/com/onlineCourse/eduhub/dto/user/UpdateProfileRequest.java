@@ -15,6 +15,6 @@ public class UpdateProfileRequest {
     @Email(message = "Email should be valid")
     private String email;
 
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 5, message = "Password must be at least 5 and at most 100 characters")
     private String password;
 }
