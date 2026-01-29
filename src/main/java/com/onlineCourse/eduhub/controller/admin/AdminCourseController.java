@@ -37,7 +37,7 @@ public class AdminCourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable Integer id) {
+    public ResponseEntity<?> getCourseById(@PathVariable Long id) {
 
         Optional<Course> courseOpt = courseRepository.findById(id);
 
@@ -69,7 +69,7 @@ public class AdminCourseController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable Integer id,
+    public ResponseEntity<?> updateCourse(@PathVariable Long id,
                                          @Valid @RequestBody Course updatedCourse) {
 
         Optional<Course> courseOpt = courseRepository.findById(id);
@@ -83,11 +83,14 @@ public class AdminCourseController {
 
         Course existing = courseOpt.get();
 
-        existing.setCourseName(updatedCourse.getCourseName());
-        existing.setCourseDescription(updatedCourse.getCourseDescription());
-        existing.setDuration(updatedCourse.getDuration());
+        existing.setTitle(updatedCourse.getTitle());
+        existing.setDescription(updatedCourse.getDescription());
         existing.setPrice(updatedCourse.getPrice());
-        existing.setRating(updatedCourse.getRating());
+        existing.setLevel(updatedCourse.getLevel());
+        existing.setMode(updatedCourse.getMode());
+        existing.setLanguage(updatedCourse.getLanguage());
+        existing.setThumbnailUrl(updatedCourse.getThumbnailUrl());
+        existing.setIsPublished(updatedCourse.getIsPublished());
         existing.setTrainer(updatedCourse.getTrainer());
 
         Course saved = courseRepository.save(existing);
@@ -100,7 +103,7 @@ public class AdminCourseController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCourse(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
 
         if (!courseRepository.existsById(id)) {
             return ResponseEntity.status(404).body(Map.of(

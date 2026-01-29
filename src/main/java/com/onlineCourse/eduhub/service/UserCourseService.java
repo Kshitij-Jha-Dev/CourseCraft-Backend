@@ -7,7 +7,7 @@ public interface UserCourseService {
 
     List<Course> getMyCourses();
 
-    void enrollInCourse(Integer courseId);
+    void enrollInCourse(Long courseId);
 
-    void unenrollFromCourse(Integer courseId); // 👈 NEW
+    void unenrollFromCourse(Long courseId);
 }

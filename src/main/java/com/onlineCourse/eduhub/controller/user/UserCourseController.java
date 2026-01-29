@@ -29,7 +29,7 @@ public class UserCourseController {
     }
 
     @PostMapping("/enroll")
-    public ResponseEntity<?> enrollInCourse(@RequestParam Integer courseId) {
+    public ResponseEntity<?> enrollInCourse(@RequestParam Long courseId) {
 
         userCourseService.enrollInCourse(courseId);
 
@@ -41,7 +41,7 @@ public class UserCourseController {
     }
     
     @PostMapping("/unenroll")
-    public ResponseEntity<?> unenrollFromCourse(@RequestParam Integer courseId) {
+    public ResponseEntity<?> unenrollFromCourse(@RequestParam Long courseId) {
 
         userCourseService.unenrollFromCourse(courseId);
 

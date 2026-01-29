@@ -2,7 +2,6 @@ package com.onlineCourse.eduhub.dto.admin;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import com.onlineCourse.eduhub.util.TimeUtil;
 
@@ -21,8 +20,8 @@ public record AdminDashboardResponse(
             long totalStudents,
             BigDecimal totalRevenue,
             Instant lastEnrollment,              
-            LocalDateTime lastCoursePublished,
-            LocalDateTime lastUserRegistered
+            Instant lastCoursePublished,
+            Instant lastUserRegistered
     ) {
         return new AdminDashboardResponse(
             totalCourses,

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.onlineCourse.eduhub.dto.user.UpdateProfileRequest;
 import com.onlineCourse.eduhub.entity.User;
 import com.onlineCourse.eduhub.repository.UserRepository;
+import com.onlineCourse.eduhub.security.SecurityUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +25,17 @@ public class UserProfileController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityUtil securityUtil;
+    
+    
     
     @PutMapping("/update")
     public ResponseEntity<?> updateProfile(
             @Valid @RequestBody UpdateProfileRequest request) {
 
         // Get logged-in user
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+    	String email = securityUtil.getCurrentUserEmail()
+    	        .orElseThrow(() -> new RuntimeException("Unauthorized"));
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

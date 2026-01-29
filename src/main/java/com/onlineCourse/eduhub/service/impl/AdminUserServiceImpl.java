@@ -32,7 +32,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public UserResponse updateUser(Integer userId, UpdateProfileRequest request) {
+    public UserResponse updateUser(Long userId, UpdateProfileRequest request) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -62,7 +62,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public void deleteUser(Integer userId) {
+    public void deleteUser(Long userId) {
 
         if (!userRepository.existsById(userId)) {
             throw new RuntimeException("User not found");
@@ -82,7 +82,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
     
     @Override
-    public void updateUserRole(Integer userId, String role) {
+    public void updateUserRole(Long userId, String role) {
 
         if (!role.equals("ROLE_USER") && !role.equals("ROLE_ADMIN")) {
             throw new RuntimeException("Invalid role");

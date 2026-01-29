@@ -1,14 +1,18 @@
 package com.onlineCourse.eduhub.service.impl;
 
-import com.onlineCourse.eduhub.dto.auth.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.onlineCourse.eduhub.dto.auth.LoginRequest;
+import com.onlineCourse.eduhub.dto.auth.LoginResponse;
+import com.onlineCourse.eduhub.dto.auth.SignupRequest;
 import com.onlineCourse.eduhub.entity.User;
 import com.onlineCourse.eduhub.exception.EmailAlreadyExistsException;
 import com.onlineCourse.eduhub.repository.UserRepository;
 import com.onlineCourse.eduhub.security.JwtService;
 import com.onlineCourse.eduhub.service.AuthService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

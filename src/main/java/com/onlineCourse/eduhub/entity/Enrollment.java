@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
@@ -24,12 +25,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(
-        name = "enrollments",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"user_id", "course_id"})
-        }
-)
+@Table(name = "enrollments",
+uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "course_id"})
+},
+indexes = {
+    @Index(name = "idx_enrollment_user", columnList = "user_id"),
+    @Index(name = "idx_enrollment_course", columnList = "course_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,7 +43,7 @@ public class Enrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // Many enrollments belong to one user
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

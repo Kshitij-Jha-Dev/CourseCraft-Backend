@@ -2,7 +2,6 @@ package com.onlineCourse.eduhub.service.impl;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,11 @@ import com.onlineCourse.eduhub.repository.UserRepository;
 import com.onlineCourse.eduhub.service.AdminDashboardService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminDashboardServiceImpl implements AdminDashboardService {
 
     private final CourseRepository courseRepo;
@@ -29,22 +30,22 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     @Cacheable("admin-dashboard")
     public AdminDashboardResponse getDashboardStats() {
 
-        long totalCourses = courseRepo.countCourses();       // or courseRepo.count()
-        long totalEnrollments = enrollmentRepo.countEnrollments(); // or enrollmentRepo.count()
-        long totalStudents = userRepo.countUsers();          // or userRepo.count()
+        long totalCourses = courseRepo.count();      
+        long totalEnrollments = enrollmentRepo.count();
+        long totalStudents = userRepo.count();         
 
         Long revenue = enrollmentRepo.totalRevenue();
         
-        System.out.println("Calculated total revenue: " + revenue);
+        log.info("Calculated total revenue: {}", revenue);
         
         BigDecimal totalRevenue =
                 revenue == null ? BigDecimal.ZERO : BigDecimal.valueOf(revenue);
         
         Instant lastEnrollment = enrollmentRepo.lastEnrollment();
         
-        LocalDateTime lastCoursePublished = courseRepo.lastCoursePublished();
+        Instant lastCoursePublished = courseRepo.lastPublishedCourse();
 
-        LocalDateTime lastUserRegistered = userRepo.lastUserRegistered();
+        Instant lastUserRegistered = userRepo.lastUserRegistered();
 
         return AdminDashboardResponse.from(
             totalCourses,

@@ -36,7 +36,7 @@ public class AdminTrainerController {
 
     // GET trainer by id
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTrainer(@PathVariable Integer id) {
+    public ResponseEntity<?> getTrainer(@PathVariable Long id) {
         return ResponseEntity.ok(Map.of(
             "success", true,
             "data", trainerService.getTrainerById(id)
@@ -58,7 +58,7 @@ public class AdminTrainerController {
     // PUT update trainer
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTrainer(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @Valid @RequestBody TrainerRequest dto) {
 
         return ResponseEntity.ok(Map.of(
@@ -70,7 +70,7 @@ public class AdminTrainerController {
 
     // DELETE trainer
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTrainer(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteTrainer(@PathVariable Long id) {
 
         trainerService.deleteTrainer(id);
 

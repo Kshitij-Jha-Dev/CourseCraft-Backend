@@ -1,6 +1,6 @@
 package com.onlineCourse.eduhub.repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,20 +9,24 @@ import org.springframework.data.repository.query.Param;
 
 import com.onlineCourse.eduhub.entity.Course;
 
-public interface CourseRepository extends JpaRepository<Course, Integer> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    @Query("""
-        SELECT c FROM Course c
-        WHERE lower(c.courseName) LIKE lower(concat('%', :keyword, '%'))
-           OR lower(c.courseDescription) LIKE lower(concat('%', :keyword, '%'))
-           OR lower(c.trainer) LIKE lower(concat('%', :keyword, '%'))
-        ORDER BY c.rating DESC
-    """)
-    List<Course> searchCourses(@Param("keyword") String keyword);
-    
-    @Query("SELECT COUNT(c) FROM Course c")
-    long countCourses();
-    
-    @Query("SELECT MAX(c.publishedAt) FROM Course c")
-    LocalDateTime lastCoursePublished();
+	@Query("""
+			SELECT c FROM Course c
+			LEFT JOIN c.trainer t
+			WHERE lower(c.title) LIKE lower(concat('%', :keyword, '%'))
+			   OR lower(c.description) LIKE lower(concat('%', :keyword, '%'))
+			   OR lower(t.name) LIKE lower(concat('%', :keyword, '%'))
+			ORDER BY c.createdAt DESC
+			""")
+	List<Course> searchCourses(@Param("keyword") String keyword);
+
+	long count();
+
+	@Query("SELECT MAX(c.createdAt) FROM Course c WHERE c.isPublished = true")
+	Instant lastPublishedCourse();
+	
+	List<Course> findByIsPublishedTrue();
+	
+	List<Course> findByIsPublishedTrueOrderByCreatedAtDesc();
 }

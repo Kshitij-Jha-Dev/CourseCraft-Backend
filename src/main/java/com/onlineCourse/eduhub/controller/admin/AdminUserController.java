@@ -32,7 +32,7 @@ public class AdminUserController {
     // Update user (no role change)
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @Valid @RequestBody UpdateProfileRequest request) {
 
         var updatedUser = adminUserService.updateUser(id, request);
@@ -46,7 +46,7 @@ public class AdminUserController {
     
     @PutMapping("/{id}/role")
     public ResponseEntity<?> updateUserRole(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @Valid @RequestBody UpdateUserRoleRequest request) {
 
         adminUserService.updateUserRole(id, request.getRole());
@@ -60,7 +60,7 @@ public class AdminUserController {
 
     // Delete user (hard delete)
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 
         adminUserService.deleteUser(id);
 

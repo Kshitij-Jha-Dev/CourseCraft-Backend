@@ -8,7 +8,7 @@ public class TrainerRequest {
 
     @NotBlank
     @Size(min = 3, max = 200)
-    private String trainerName;
+    private String name;
 
     @NotBlank
     @Size(min = 10, max = 1000)

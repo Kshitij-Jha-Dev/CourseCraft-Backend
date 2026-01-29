@@ -25,7 +25,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Trainer getTrainerById(Integer id) {
+    public Trainer getTrainerById(Long id) {
         return trainerRepo.findById(id)
             .orElseThrow(() -> new RuntimeException("Trainer not found"));
     }
@@ -33,7 +33,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public Trainer createTrainer(TrainerRequest dto) {
         Trainer trainer = Trainer.builder()
-            .trainerName(dto.getTrainerName())
+            .name(dto.getName())
             .description(dto.getDescription())
             .rating(dto.getRating() == null ? 4.5 : dto.getRating())
             .imageUrl(dto.getImageUrl())
@@ -43,11 +43,11 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Trainer updateTrainer(Integer id, TrainerRequest dto) {
+    public Trainer updateTrainer(Long id, TrainerRequest dto) {
 
         Trainer trainer = getTrainerById(id);
 
-        trainer.setTrainerName(dto.getTrainerName());
+        trainer.setName(dto.getName());
         trainer.setDescription(dto.getDescription());
         trainer.setRating(dto.getRating());
         trainer.setImageUrl(dto.getImageUrl());
@@ -56,7 +56,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public void deleteTrainer(Integer id) {
+    public void deleteTrainer(Long id) {
 
         Trainer trainer = getTrainerById(id);
 

@@ -1,7 +1,6 @@
 package com.onlineCourse.eduhub.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,18 +32,11 @@ public class UserCourseServiceImpl implements UserCourseService {
         String email = securityUtil.getCurrentUserEmail()
                 .orElseThrow(() -> new RuntimeException("Unauthorized"));
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<Enrollment> enrollments = enrollmentRepository.findByUser(user);
-
-        return enrollments.stream()
-                .map(Enrollment::getCourse)
-                .collect(Collectors.toList());
+        return enrollmentRepository.findCoursesByUserEmail(email);
     }
 
     @Override
-    public void enrollInCourse(Integer courseId) {
+    public void enrollInCourse(Long courseId) {
 
         String email = securityUtil.getCurrentUserEmail()
                 .orElseThrow(() -> new RuntimeException("Unauthorized"));
@@ -52,8 +44,8 @@ public class UserCourseServiceImpl implements UserCourseService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+        // ⭐ Use getReferenceById for performance
+        Course course = courseRepository.getReferenceById(courseId);
 
         if (enrollmentRepository.existsByUserIdAndCourseId(user.getId(), courseId)) {
             throw new RuntimeException("User already enrolled in this course");
@@ -66,9 +58,9 @@ public class UserCourseServiceImpl implements UserCourseService {
 
         enrollmentRepository.save(enrollment);
     }
-    
+
     @Override
-    public void unenrollFromCourse(Integer courseId) {
+    public void unenrollFromCourse(Long courseId) {
 
         String email = securityUtil.getCurrentUserEmail()
                 .orElseThrow(() -> new RuntimeException("Unauthorized"));
@@ -78,7 +70,7 @@ public class UserCourseServiceImpl implements UserCourseService {
 
         Enrollment enrollment = enrollmentRepository
                 .findByUserIdAndCourseId(user.getId(), courseId)
-                .orElseThrow(() -> new RuntimeException("User is not enrolled in this course"));
+                .orElseThrow(() -> new RuntimeException("User is not enrolled"));
 
         enrollmentRepository.delete(enrollment);
     }

@@ -1,83 +1,94 @@
 package com.onlineCourse.eduhub.entity;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.onlineCourse.eduhub.enums.CourseLevel;
+import com.onlineCourse.eduhub.enums.CourseMode;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
 @Entity
-@Table(name="COURSE")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "courses",
+       indexes = {
+           @Index(name = "idx_course_trainer", columnList = "trainer_id")
+       })
+@Getter
+@Setter
+@NoArgsConstructor
 public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @NotBlank(message = "Course name is required")
-    @Size(min = 3, max = 100, message = "Course name must be between 3 and 100 characters")
-    @Column(nullable = false)
-    private String courseName;
+    @Column(nullable = false, length = 150)
+    private String title;
 
-    @NotBlank(message = "Course description is required")
-    @Size(min = 10, max = 1000, message = "Course description must be between 10 and 1000 characters")
-    @Column(nullable = false, length = 1000)
-    private String courseDescription;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @NotNull(message = "Duration is required")
-    @Min(value = 1, message = "Duration must be at least 1 hour")
-    @Max(value = 1000, message = "Duration cannot exceed 1000 hours")
-    @Column(nullable = false)
-    private Integer duration;
+    private String thumbnailUrl;
 
-    @NotNull(message = "Price is required")
-    @Min(value = 0, message = "Price cannot be negative")
-    @Max(value = 1000000, message = "Price too high")
-    @Column(nullable = false)
-    private Integer price = 0;
+    @Enumerated(EnumType.STRING)
+    private CourseLevel level;
 
-    @NotNull(message = "Rating is required")
-    @DecimalMin(value = "0.0", message = "Rating cannot be less than 0")
-    @DecimalMax(value = "5.0", message = "Rating cannot be more than 5")
-    @Column(nullable = false)
-    private Double rating = 4.5;
+    @Enumerated(EnumType.STRING)
+    private CourseMode mode;
 
-    @NotBlank(message = "Trainer name is required")
-    @Size(min = 3, max = 100, message = "Trainer name must be between 3 and 100 characters")
-    @Column(nullable = false)
-    private String trainer;
-    
-    @Column(nullable = false)
-    private LocalDateTime publishedAt;
+    private BigDecimal price;
 
-    @Transient
-    private boolean isEnrolled;
+    private String language;
 
-    @Transient
-    private String imageId;
+    private Boolean isPublished = false;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private java.util.List<Enrollment> enrollments = new java.util.ArrayList<>();
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    // MANY COURSES → ONE TRAINER
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
+    @JsonIgnoreProperties("courses")
+    private Trainer trainer;
+
+    // ONE COURSE → MANY SECTIONS
+    @OneToMany(mappedBy = "course",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @OrderBy("sequenceNo ASC")
+    private List<CourseSection> sections = new ArrayList<>();
+
+    @PrePersist
+    void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = Instant.now();
+    }
 }

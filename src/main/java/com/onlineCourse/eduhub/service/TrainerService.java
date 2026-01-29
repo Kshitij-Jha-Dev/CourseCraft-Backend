@@ -8,8 +8,8 @@ import com.onlineCourse.eduhub.entity.Trainer;
 public interface TrainerService {
 
     List<Trainer> getAllTrainers();
-    Trainer getTrainerById(Integer id);
+    Trainer getTrainerById(Long id);
     Trainer createTrainer(TrainerRequest dto);
-    Trainer updateTrainer(Integer id, TrainerRequest dto);
-    void deleteTrainer(Integer id);
+    Trainer updateTrainer(Long id, TrainerRequest dto);
+    void deleteTrainer(Long id);
 }

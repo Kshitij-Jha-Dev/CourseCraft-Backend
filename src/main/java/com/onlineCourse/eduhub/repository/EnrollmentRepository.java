@@ -7,27 +7,36 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import com.onlineCourse.eduhub.entity.Course;
 import com.onlineCourse.eduhub.entity.Enrollment;
 import com.onlineCourse.eduhub.entity.User;
 
-public interface EnrollmentRepository extends JpaRepository<Enrollment, Integer> {
 
+@Repository
+public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
+
+    // Fetch all enrollments of a user
     List<Enrollment> findByUser(User user);
-    
-    boolean existsByUserIdAndCourseId(Integer userId, Integer courseId);
-    
+
+    // Prevent duplicate enrollment
+    boolean existsByUserIdAndCourseId(Long userId, Long courseId);
+
+    // Used for "My Courses"
+    Optional<Enrollment> findByUserIdAndCourseId(Long userId, Long courseId);
+
+    // Dashboard metrics
+    long count();
+
+    long countByCourseId(Long courseId);
+
     @Query("""
-            select e.course.id
-            from Enrollment e
-            where e.user.email = :email
-        """)
-        List<Integer> findEnrolledCourseIds(@Param("email") String email);
-    
-    Optional<Enrollment> findByUserIdAndCourseId(Integer userId, Integer courseId);
-    
-    @Query("SELECT COUNT(e) FROM Enrollment e")
-    long countEnrollments();
+        select e.course.id
+        from Enrollment e
+        where e.user.email = :email
+    """)
+    List<Long> findEnrolledCourseIds(@Param("email") String email);
 
     @Query("""
         SELECT COALESCE(SUM(c.price), 0)
@@ -38,4 +47,11 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Integer>
 
     @Query("SELECT MAX(e.enrolledAt) FROM Enrollment e")
     Instant lastEnrollment();
+    
+    @Query("""
+    		select e.course
+    		from Enrollment e
+    		where e.user.email = :email
+    		""")
+    		List<Course> findCoursesByUserEmail(@Param("email") String email);
 }

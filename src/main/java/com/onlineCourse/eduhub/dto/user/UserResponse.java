@@ -1,18 +1,20 @@
 package com.onlineCourse.eduhub.dto.user;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class UserResponse {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String email;
     private String role;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     
 }

@@ -9,9 +9,9 @@ public interface AdminUserService {
 
     List<UserResponse> getAllUsers();
 
-    UserResponse updateUser(Integer userId, UpdateProfileRequest request);
+    UserResponse updateUser(Long userId, UpdateProfileRequest request);
 
-    void deleteUser(Integer userId);
+    void deleteUser(Long userId);
     
-    void updateUserRole(Integer userId, String role);
+    void updateUserRole(Long userId, String role);
 }
