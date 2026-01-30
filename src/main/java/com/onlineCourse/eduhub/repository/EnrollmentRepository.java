@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,10 +49,17 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Query("SELECT MAX(e.enrolledAt) FROM Enrollment e")
     Instant lastEnrollment();
     
-    @Query("""
-    		select e.course
-    		from Enrollment e
-    		where e.user.email = :email
-    		""")
-    		List<Course> findCoursesByUserEmail(@Param("email") String email);
+    @EntityGraph(attributePaths = {
+    	    "trainer",
+    	    "topics",
+    	    "syllabus",
+    	    "syllabus.lessons",
+    	    "syllabus.lessons.materials"
+    	})
+    	@Query("""
+    	SELECT e.course
+    	FROM Enrollment e
+    	WHERE e.user.email = :email
+    	""")
+    	List<Course> findCoursesByUserEmail(@Param("email") String email);
 }

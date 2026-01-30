@@ -1,6 +1,5 @@
 package com.onlineCourse.eduhub.entity;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -24,7 +23,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "lessons",
        uniqueConstraints = {
-           @UniqueConstraint(columnNames = {"section_id", "sequence_no"})
+           @UniqueConstraint(columnNames = {"syllabus_id", "lesson_no"})
        })
 @Getter
 @Setter
@@ -35,30 +34,32 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    @Column(nullable = false)
+    private String lessonName;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    private Integer durationMinutes;
-
-    private Boolean isPreview = false;
-
-    private Integer sequenceNo;
-
-    private Instant createdAt;
+    @Column(nullable = false)
+    private Integer lessonNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id", nullable = false)
-    private CourseSection section;
+    @JoinColumn(name = "syllabus_id", nullable = false)
+    private Syllabus syllabus;
 
-    @OneToMany(mappedBy = "lesson",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "lesson",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    @OrderBy("id ASC")
     private List<LessonMaterial> materials = new ArrayList<>();
+    
+    
+    public void addMaterial(LessonMaterial material) {
+        materials.add(material);
+        material.setLesson(this);
+    }
 
-    @PrePersist
-    void onCreate() {
-        createdAt = Instant.now();
+    public void removeMaterial(LessonMaterial material) {
+        materials.remove(material);
+        material.setLesson(null);
     }
 }

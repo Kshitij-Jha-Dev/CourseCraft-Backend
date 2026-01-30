@@ -1,7 +1,6 @@
 package com.onlineCourse.eduhub.controller.admin;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.onlineCourse.eduhub.entity.Course;
-import com.onlineCourse.eduhub.repository.CourseRepository;
+import com.onlineCourse.eduhub.dto.CourseRequest;
+import com.onlineCourse.eduhub.dto.admin.AdminCourseResponse;
+import com.onlineCourse.eduhub.service.AdminCourseService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,100 +24,64 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminCourseController {
 
-    private final CourseRepository courseRepository;
+    private final AdminCourseService adminCourseService;
 
     @PostMapping
-    public ResponseEntity<?> addCourse(@Valid @RequestBody Course course) {
-        Course savedCourse = courseRepository.save(course);
+    public ResponseEntity<?> addCourse(
+            @Valid @RequestBody CourseRequest request) {
+
+    	AdminCourseResponse saved = adminCourseService.createCourse(request);
+
         return ResponseEntity.status(201).body(Map.of(
-        	    "success", true,
-        	    "message", "Course created successfully",
-        	    "data", savedCourse
-        	));
+                "success", true,
+                "message", "Course created successfully",
+                "data", saved
+        ));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCourseById(@PathVariable Long id) {
 
-        Optional<Course> courseOpt = courseRepository.findById(id);
-
-        if (courseOpt.isEmpty()) {
-            return ResponseEntity.status(404).body(Map.of(
-                    "success", false,
-                    "message", "Course not found"
-            ));
-        }
-
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "Course fetched successfully",
-                "data", courseOpt.get()
+                "data", adminCourseService.getCourse(id)
         ));
     }
-    
+
     @GetMapping
     public ResponseEntity<?> getAllCourses() {
 
-        var courses = courseRepository.findAll();
+        var courses = adminCourseService.getAllCourses();
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "Courses fetched successfully",
                 "count", courses.size(),
                 "data", courses
         ));
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable Long id,
-                                         @Valid @RequestBody Course updatedCourse) {
+    public ResponseEntity<?> updateCourse(
+            @PathVariable Long id,
+            @Valid @RequestBody CourseRequest request) {
 
-        Optional<Course> courseOpt = courseRepository.findById(id);
-
-        if (courseOpt.isEmpty()) {
-            return ResponseEntity.status(404).body(Map.of(
-                    "success", false,
-                    "message", "Course not found"
-            ));
-        }
-
-        Course existing = courseOpt.get();
-
-        existing.setTitle(updatedCourse.getTitle());
-        existing.setDescription(updatedCourse.getDescription());
-        existing.setPrice(updatedCourse.getPrice());
-        existing.setLevel(updatedCourse.getLevel());
-        existing.setMode(updatedCourse.getMode());
-        existing.setLanguage(updatedCourse.getLanguage());
-        existing.setThumbnailUrl(updatedCourse.getThumbnailUrl());
-        existing.setIsPublished(updatedCourse.getIsPublished());
-        existing.setTrainer(updatedCourse.getTrainer());
-
-        Course saved = courseRepository.save(existing);
+    	AdminCourseResponse updated = adminCourseService.updateCourse(id, request);
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Course updated successfully",
-                "data", saved
+                "data", updated
         ));
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
 
-        if (!courseRepository.existsById(id)) {
-            return ResponseEntity.status(404).body(Map.of(
-                    "success", false,
-                    "message", "Course not found"
-            ));
-        }
-
-        courseRepository.deleteById(id);
+        adminCourseService.deleteCourse(id);
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Course deleted successfully"
         ));
     }
-    
 }

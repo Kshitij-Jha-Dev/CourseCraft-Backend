@@ -1,34 +1,33 @@
-package com.onlineCourse.eduhub.dto;
+package com.onlineCourse.eduhub.dto.admin;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Set;
 
+import com.onlineCourse.eduhub.dto.TrainerSummary;
 import com.onlineCourse.eduhub.enums.CourseLevel;
 import com.onlineCourse.eduhub.enums.CourseMode;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 @Builder
-public class CourseResponse {
+public class AdminCourseResponse {
 
     private Long id;
     private String title;
     private String description;
     private String thumbnailUrl;
-
-    private BigDecimal price;
     private CourseLevel level;
     private CourseMode mode;
+    private BigDecimal price;
     private String language;
+    private Boolean isPublished;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     private TrainerSummary trainer;
-    private Set<String> topics;
-
-    private boolean enrolled;
     
-    private SyllabusDTO syllabus;
+    private Set<String> topics;
 }

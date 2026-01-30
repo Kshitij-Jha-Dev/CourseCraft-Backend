@@ -1,6 +1,7 @@
 package com.onlineCourse.eduhub.dto;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import com.onlineCourse.eduhub.enums.CourseLevel;
 import com.onlineCourse.eduhub.enums.CourseMode;
@@ -29,6 +30,10 @@ public class CourseRequest {
     private Boolean isPublished;
 
     private Long trainerId;
+    
+    private Set<String> topics;
+    
+    private SyllabusDTO syllabus;
 }
 
 

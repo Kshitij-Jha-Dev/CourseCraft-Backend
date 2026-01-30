@@ -2,7 +2,9 @@ package com.onlineCourse.eduhub.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,7 +28,25 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	@Query("SELECT MAX(c.createdAt) FROM Course c WHERE c.isPublished = true")
 	Instant lastPublishedCourse();
 	
-	List<Course> findByIsPublishedTrue();
 	
+	@EntityGraph(attributePaths = {
+	        "trainer",
+	        "topics",
+	        "syllabus",
+	        "syllabus.lessons",
+	        "syllabus.lessons.materials"
+	})
 	List<Course> findByIsPublishedTrueOrderByCreatedAtDesc();
+	
+	
+	@EntityGraph(attributePaths = {
+	        "trainer",
+	        "topics",
+	        "syllabus",
+	        "syllabus.lessons",
+	        "syllabus.lessons.materials"
+	})
+	Optional<Course> findByIdAndIsPublishedTrue(Long id);
+	
+	boolean existsByTitleIgnoreCase(String title);
 }
