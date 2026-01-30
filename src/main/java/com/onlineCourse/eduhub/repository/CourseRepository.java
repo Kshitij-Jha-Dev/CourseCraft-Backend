@@ -98,4 +98,19 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	        "syllabus.lessons.materials"
 	})
 	Optional<Course> findById(Long id);
+	
+	@EntityGraph(attributePaths = {
+		    "trainer",
+		    "topics",
+		    "syllabus",
+		    "syllabus.lessons",
+		    "syllabus.lessons.materials"
+		})
+		@Query("""
+		SELECT DISTINCT c
+		FROM Course c
+		JOIN Enrollment e ON e.course = c
+		WHERE e.user.email = :email
+		""")
+		List<Course> findCoursesByUserEmail(@Param("email") String email);
 }

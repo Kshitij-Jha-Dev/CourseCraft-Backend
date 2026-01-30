@@ -42,7 +42,7 @@ public class UserCourseServiceImpl implements UserCourseService {
         String email = securityUtil.getCurrentUserEmail()
                 .orElseThrow(() -> new AccessDeniedException("Unauthorized"));
 
-        var courses =  enrollmentRepository.findCoursesByUserEmail(email);
+        var courses =  courseRepository.findCoursesByUserEmail(email);
         
         return courses.stream()
         		.map(course -> toResponse(course, true))
