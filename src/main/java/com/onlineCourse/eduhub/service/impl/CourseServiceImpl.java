@@ -36,15 +36,27 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public List<CourseResponse> getAllPublishedCourses() {
+    public List<CourseResponse> getVisibleCourses() {
 
-        List<Course> courses =
-        		courseRepository.findByIsPublishedTrueOrderByCreatedAtDesc();
+        List<Course> courses;
 
-        var enrolledIds = getEnrolledCourseIds();
+        if (securityUtil.isAdmin()) {
+            courses = courseRepository.findAllByOrderByCreatedAtDesc();
+        } else {
+            courses = courseRepository.findByIsPublishedTrueOrderByCreatedAtDesc();
+        }
+
+        Set<Long> enrolledIds = getEnrolledCourseIds();
+
+        boolean isPublic = securityUtil.getCurrentUserEmail().isEmpty();
 
         return courses.stream()
-                .map(course -> toResponse(course, enrolledIds.contains(course.getId())))
+                .map(course ->
+                        toResponse(
+                                course,
+                                !isPublic && enrolledIds.contains(course.getId())
+                        )
+                )
                 .toList();
     }
 
@@ -52,14 +64,56 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse getCourse(Long id) {
 
-        Course course = courseRepository.findByIdAndIsPublishedTrue(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+        Course course = fetchCourseBasedOnRole(id);
 
-        boolean enrolled = getEnrolledCourseIds().contains(course.getId());
+        boolean enrolled = false;
+
+        // Only check enrollment if user is logged in
+        var emailOpt = securityUtil.getCurrentUserEmail();
+
+        if (emailOpt.isPresent()) {
+            enrolled = enrollmentRepository
+                    .existsByUserEmailAndCourseId(emailOpt.get(), id);
+        }
 
         return toResponse(course, enrolled);
     }
+    
+    @Override
+    public List<CourseResponse> searchCourses(String keyword) {
 
+        List<Course> courses;
+
+        if (securityUtil.isAdmin()) {
+            courses = courseRepository.searchAllCourses(keyword);
+        } else {
+            courses = courseRepository.searchPublishedCourses(keyword);
+        }
+
+        Set<Long> enrolledIds = getEnrolledCourseIds();
+        boolean isPublic = securityUtil.getCurrentUserEmail().isEmpty();
+
+        return courses.stream()
+                .map(course ->
+                        toResponse(
+                                course,
+                                !isPublic && enrolledIds.contains(course.getId())
+                        )
+                )
+                .toList();
+    }
+
+    
+    private Course fetchCourseBasedOnRole(Long id) {
+
+        if (securityUtil.isAdmin()) {
+            return courseRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+        }
+
+        return courseRepository.findByIdAndIsPublishedTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+    }
 
     private Set<Long> getEnrolledCourseIds() {
 

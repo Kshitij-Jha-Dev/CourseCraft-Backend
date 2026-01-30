@@ -62,4 +62,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     	WHERE e.user.email = :email
     	""")
     	List<Course> findCoursesByUserEmail(@Param("email") String email);
+    
+    boolean existsByUserEmailAndCourseId(String email, Long courseId);
 }

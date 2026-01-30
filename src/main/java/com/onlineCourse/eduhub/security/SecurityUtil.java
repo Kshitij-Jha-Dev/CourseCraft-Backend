@@ -19,4 +19,14 @@ public class SecurityUtil {
 
         return Optional.of(auth.getName());
     }
+    
+    public boolean isAdmin() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null) return false;
+
+        return auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
 }

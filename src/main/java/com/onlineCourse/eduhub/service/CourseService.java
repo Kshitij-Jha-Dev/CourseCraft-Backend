@@ -6,7 +6,9 @@ import com.onlineCourse.eduhub.dto.CourseResponse;
 
 public interface CourseService {
 
-    List<CourseResponse> getAllPublishedCourses();
+    List<CourseResponse> getVisibleCourses();
 
     CourseResponse getCourse(Long id);
+    
+    List<CourseResponse> searchCourses(String keyword);
 }
