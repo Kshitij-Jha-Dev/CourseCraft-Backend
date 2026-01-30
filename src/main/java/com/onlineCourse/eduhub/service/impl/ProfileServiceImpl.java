@@ -35,6 +35,10 @@ public class ProfileServiceImpl implements ProfileService {
             user.setName(request.getName());
         }
 
+        if (request.getImageUrl() != null) {
+            user.setImageUrl(request.getImageUrl());
+        }
+        
         // Update email (check uniqueness)
         if (request.getEmail() != null &&
             !request.getEmail().equals(user.getEmail())) {

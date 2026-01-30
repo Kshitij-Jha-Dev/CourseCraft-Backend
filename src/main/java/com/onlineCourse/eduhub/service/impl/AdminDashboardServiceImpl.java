@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlineCourse.eduhub.dto.admin.AdminDashboardResponse;
+import com.onlineCourse.eduhub.entity.User;
 import com.onlineCourse.eduhub.repository.CourseRepository;
 import com.onlineCourse.eduhub.repository.EnrollmentRepository;
 import com.onlineCourse.eduhub.repository.UserRepository;
@@ -32,7 +33,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 
         long totalCourses = courseRepo.count();      
         long totalEnrollments = enrollmentRepo.count();
-        long totalStudents = userRepo.count();         
+        long totalStudents = userRepo.countByRole(User.ROLE_USER);         
 
         Long revenue = enrollmentRepo.totalRevenue();
         

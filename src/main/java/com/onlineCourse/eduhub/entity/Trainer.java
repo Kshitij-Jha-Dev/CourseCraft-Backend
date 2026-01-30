@@ -1,7 +1,7 @@
 package com.onlineCourse.eduhub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,5 +42,5 @@ public class Trainer {
 
     @OneToMany(mappedBy = "trainer")
     @JsonIgnore
-    private List<Course> courses = new ArrayList<>();
+    private Set<Course> courses = new HashSet<>();
 }

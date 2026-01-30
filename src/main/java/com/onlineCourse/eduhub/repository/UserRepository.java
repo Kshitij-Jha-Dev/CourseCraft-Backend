@@ -18,5 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Instant lastUserRegistered();
     
     boolean existsByEmailIgnoreCase(String email);
+    
+    long countByRole(String role);
 }
 

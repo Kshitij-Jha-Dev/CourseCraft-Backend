@@ -44,6 +44,10 @@ public class UserProfileController {
         if (request.getName() != null) {
             user.setName(request.getName());
         }
+        
+        if (request.getImageUrl() != null) {
+            user.setImageUrl(request.getImageUrl());
+        }
 
         // Update email (if provided & changed)
         if (request.getEmail() != null &&

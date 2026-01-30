@@ -1,7 +1,7 @@
 package com.onlineCourse.eduhub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,7 +50,7 @@ public class Lesson {
         orphanRemoval = true
     )
     @OrderBy("id ASC")
-    private List<LessonMaterial> materials = new ArrayList<>();
+    private Set<LessonMaterial> materials = new HashSet<>();
     
     
     public void addMaterial(LessonMaterial material) {

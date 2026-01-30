@@ -54,7 +54,8 @@ public class CourseServiceImpl implements CourseService {
                 .map(course ->
                         toResponse(
                                 course,
-                                !isPublic && enrolledIds.contains(course.getId())
+                                !isPublic && enrolledIds.contains(course.getId()),
+                                enrollmentRepository.countByCourseId(course.getId())
                         )
                 )
                 .toList();
@@ -76,7 +77,9 @@ public class CourseServiceImpl implements CourseService {
                     .existsByUserEmailAndCourseId(emailOpt.get(), id);
         }
 
-        return toResponse(course, enrolled);
+        long count = enrollmentRepository.countByCourseId(id);
+        
+        return toResponse(course, enrolled, count);
     }
     
     @Override
@@ -97,7 +100,8 @@ public class CourseServiceImpl implements CourseService {
                 .map(course ->
                         toResponse(
                                 course,
-                                !isPublic && enrolledIds.contains(course.getId())
+                                !isPublic && enrolledIds.contains(course.getId()),
+                                enrollmentRepository.countByCourseId(course.getId())
                         )
                 )
                 .toList();
@@ -126,7 +130,10 @@ public class CourseServiceImpl implements CourseService {
 
    
 
-    private CourseResponse toResponse(Course course, boolean enrolled) {
+    private CourseResponse toResponse(
+            Course course,
+            boolean enrolled,
+            long enrollmentCount) {
 
         TrainerSummary trainerSummary = null;
 
@@ -153,6 +160,7 @@ public class CourseServiceImpl implements CourseService {
                 .trainer(trainerSummary)
                 .syllabus(mapSyllabus(course.getSyllabus()))
                 .enrolled(enrolled)
+                .enrollments(enrollmentCount)
                 .build();
     }
 

@@ -17,4 +17,6 @@ public class UpdateProfileRequest {
 
     @Size(min = 5, message = "Password must be at least 5 and at most 100 characters")
     private String password;
+    
+    private String imageUrl;
 }

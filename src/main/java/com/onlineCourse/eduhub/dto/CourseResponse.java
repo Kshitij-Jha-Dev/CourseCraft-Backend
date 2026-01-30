@@ -31,4 +31,6 @@ public class CourseResponse {
     private boolean enrolled;
     
     private SyllabusDTO syllabus;
+    
+    private long enrollments;
 }

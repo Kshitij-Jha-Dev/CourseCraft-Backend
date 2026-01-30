@@ -1,7 +1,7 @@
 package com.onlineCourse.eduhub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -40,7 +40,7 @@ public class Syllabus {
         orphanRemoval = true
     )
     @OrderBy("lessonNo ASC")
-    private List<Lesson> lessons = new ArrayList<>();
+    private Set<Lesson> lessons = new HashSet<>();
     
     public void addLesson(Lesson lesson) {
         lessons.add(lesson);

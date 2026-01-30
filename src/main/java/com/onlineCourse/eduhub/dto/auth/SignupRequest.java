@@ -19,4 +19,6 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 5, max = 100)
     private String password;
+    
+    private String imageUrl;
 }

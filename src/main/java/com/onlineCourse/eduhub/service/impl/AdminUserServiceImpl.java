@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.onlineCourse.eduhub.dto.user.UpdateProfileRequest;
 import com.onlineCourse.eduhub.dto.user.UserResponse;
 import com.onlineCourse.eduhub.entity.User;
+import com.onlineCourse.eduhub.exception.ResourceNotFoundException;
 import com.onlineCourse.eduhub.repository.UserRepository;
 import com.onlineCourse.eduhub.service.AdminUserService;
 
@@ -52,6 +53,10 @@ public class AdminUserServiceImpl implements AdminUserService {
         if (request.getEmail() != null) {
             user.setEmail(request.getEmail());
         }
+        
+        if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
+            user.setImageUrl(request.getImageUrl());
+        }
 
         if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -77,6 +82,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
+                user.getImageUrl(),
                 user.getCreatedAt()
         );
     }
@@ -89,7 +95,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        		.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         user.setRole(role);
         userRepository.save(user);

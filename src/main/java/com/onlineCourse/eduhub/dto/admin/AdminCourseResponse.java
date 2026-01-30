@@ -30,4 +30,6 @@ public class AdminCourseResponse {
     private TrainerSummary trainer;
     
     private Set<String> topics;
+    
+    private long enrollments;
 }

@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class UserCourseServiceImpl implements UserCourseService {
 
     private final EnrollmentRepository enrollmentRepository;
@@ -50,6 +50,7 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     @Override
+    @Transactional
     public void enrollInCourse(Long courseId) {
 
         String email = securityUtil.getCurrentUserEmail()
@@ -74,6 +75,7 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     @Override
+    @Transactional
     public void unenrollFromCourse(Long courseId) {
 
         String email = securityUtil.getCurrentUserEmail()
