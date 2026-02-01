@@ -1,5 +1,6 @@
 package com.onlineCourse.eduhub.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -11,6 +12,8 @@ import com.onlineCourse.eduhub.dto.LessonDTO;
 import com.onlineCourse.eduhub.dto.LessonMaterialDTO;
 import com.onlineCourse.eduhub.dto.SyllabusDTO;
 import com.onlineCourse.eduhub.dto.TrainerSummary;
+import com.onlineCourse.eduhub.dto.user.CourseProgressUpdate;
+import com.onlineCourse.eduhub.dto.user.UpdateProgressRequest;
 import com.onlineCourse.eduhub.entity.Course;
 import com.onlineCourse.eduhub.entity.Enrollment;
 import com.onlineCourse.eduhub.entity.Lesson;
@@ -42,11 +45,11 @@ public class UserCourseServiceImpl implements UserCourseService {
         String email = securityUtil.getCurrentUserEmail()
                 .orElseThrow(() -> new AccessDeniedException("Unauthorized"));
 
-        var courses =  courseRepository.findCoursesByUserEmail(email);
-        
-        return courses.stream()
-        		.map(course -> toResponse(course, true))
-        		.toList();
+        var enrollments = enrollmentRepository.findEnrollmentsByUserEmail(email);
+
+        return enrollments.stream()
+                .map(e -> toResponse(e.getCourse(), true, e.getProgress()))
+                .toList();
     }
 
     @Override
@@ -91,9 +94,30 @@ public class UserCourseServiceImpl implements UserCourseService {
         enrollmentRepository.delete(enrollment);
     }
     
-    
-    private CourseResponse toResponse(Course course, boolean enrolled) {
+    @Override
+    @Transactional
+    public void updateProgress(UpdateProgressRequest request) {
 
+        String email = securityUtil.getCurrentUserEmail()
+                .orElseThrow(() -> new AccessDeniedException("Unauthorized"));
+
+        for (CourseProgressUpdate u : request.updates()) {
+
+            Enrollment enrollment = enrollmentRepository
+                    .findByUserEmailAndCourseId(email, u.courseId())
+                    .orElseThrow(() -> new RuntimeException("Not enrolled"));
+
+            enrollment.setProgress(u.progress());
+        }
+    }
+    
+    
+    
+    private CourseResponse toResponse(
+            Course course,
+            boolean enrolled,
+            Integer progress
+    ) {
         TrainerSummary trainerSummary = null;
 
         if (course.getTrainer() != null) {
@@ -119,6 +143,7 @@ public class UserCourseServiceImpl implements UserCourseService {
                 .trainer(trainerSummary)
                 .syllabus(mapSyllabus(course.getSyllabus()))
                 .enrolled(enrolled)
+                .progress(progress == null ? BigDecimal.ZERO : BigDecimal.valueOf(progress))
                 .build();
     }
 

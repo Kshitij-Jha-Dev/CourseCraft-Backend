@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -62,4 +63,23 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 //    	List<Course> findCoursesByUserEmail(@Param("email") String email);
     
     boolean existsByUserEmailAndCourseId(String email, Long courseId);
+    
+    @EntityGraph(attributePaths = {
+    	    "course",
+    	    "course.trainer",
+    	    "course.topics",
+    	    "course.syllabus",
+    	    "course.syllabus.lessons",
+    	    "course.syllabus.lessons.materials"
+    	})
+    	@Query("""
+    	    SELECT e
+    	    FROM Enrollment e
+    	    WHERE e.user.email = :email
+    	    ORDER BY e.enrolledAt DESC
+    	""")
+    	List<Enrollment> findEnrollmentsByUserEmail(@Param("email") String email);
+    
+    Optional<Enrollment> findByUserEmailAndCourseId(String email, Long courseId);
+    
 }

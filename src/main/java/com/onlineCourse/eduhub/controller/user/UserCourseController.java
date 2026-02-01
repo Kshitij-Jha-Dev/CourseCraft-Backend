@@ -3,8 +3,15 @@ package com.onlineCourse.eduhub.controller.user;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.onlineCourse.eduhub.dto.user.UpdateProgressRequest;
 import com.onlineCourse.eduhub.service.UserCourseService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +32,18 @@ public class UserCourseController {
                 "success", true,
                 "count", courses.size(),
                 "data", courses
+        ));
+    }
+    
+    @PutMapping("/progress")
+    public ResponseEntity<?> updateProgress(
+            @RequestBody UpdateProgressRequest request) {
+
+        userCourseService.updateProgress(request);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Progress updated successfully"
         ));
     }
 

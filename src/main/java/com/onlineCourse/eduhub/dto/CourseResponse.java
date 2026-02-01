@@ -24,6 +24,7 @@ public class CourseResponse {
     private CourseLevel level;
     private CourseMode mode;
     private String language;
+    private BigDecimal progress;
 
     private TrainerSummary trainer;
     private Set<String> topics;
